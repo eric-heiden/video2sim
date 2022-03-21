@@ -1,12 +1,295 @@
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:site_name" content="Video2Sim">
+    <meta property="og:title" content="Inferring Articulated Rigid Body Dynamics from RGBD Video">
+    <meta property="og:description"
+        content="A differentiable simulator for robotic cutting, enabling efficient inference of simulation parameters, and optimization of cutting motions.">
+    <meta property="og:url" content="https://eric-heiden.github.io/video2sim">
+    <meta property="og:image" content="https://eric-heiden.github.io/video2sim/teaser.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Inferring Articulated Rigid Body Dynamics from RGBD Video">
+    <meta name="twitter:description" content="A differentiable simulator for robotic cutting, enabling efficient inference of simulation parameters, and optimization of cutting motions.">
+    <meta name="twitter:creator" content="@eric_heiden">
+    <meta name="twitter:url" content="https://eric-heiden.github.io/video2sim">
+    <meta name="twitter:image:src" content="https://eric-heiden.github.io/video2sim/teaser.jpg">
+
+    <meta name="description"
+        content="A differentiable simulator for robotic cutting, enabling efficient inference of simulation parameters, and optimization of cutting motions.">
+    <meta name="author" content="Eric Heiden, Ziang Liu, Vibhav Vineet, Erwin Coumans, Gaurav S. Sukhatme">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
     <title>Inferring Articulated Rigid Body Dynamics from RGBD Video</title>
+
+    <style>
+        div.authors p:first-of-type {
+            font-size: 1.4em;
+        }
+
+        div.authors p {
+            text-align: center;
+        }
+
+        div.affiliations p {
+            text-align: center;
+        }
+
+        h1,
+        h2 {
+            margin: 1em 0;
+            text-align: center;
+        }
+
+        a:link {
+            text-decoration: none;
+        }
+
+        #video {
+            text-align: center;
+        }
+
+        div.container {
+            padding-top: 60px;
+        }
+
+        .navbar {
+            padding: 0.4em 2em;
+        }
+
+        #abstract p {
+            text-align: justify;
+        }
+
+        #results .label {
+            margin-top: 1em;
+            margin-bottom: 0.3em;
+            font-weight: bold;
+        }
+
+        #results h3,
+        #results h5 {
+            margin-top: 2em;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Inferring Articulated Rigid Body Dynamics from RGBD Video</h1>
+    <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
+        <a class="navbar-brand" href="#">Inferring Articulated Rigid Body Dynamics from RGBD Video</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end position-relative" id="navbarToggle">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" target="_self">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#abstract" target="_self">Abstract</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="#video" target="_self">Video</a>
+                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#results" target="_self">Results</a>
+                    </li_self>
+                <li class="nav-item">
+                    <a class="nav-link" href="#acknowledgements" target="_self">Acknowledgements</a>
+                    </li_self>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <h1>Inferring Articulated Rigid Body Dynamics from RGBD Video</h1>
+
+        <h2>Under Review at IROS 2022</h2>
+
+        <div class="row authors">
+            <div class="col">
+                <p>
+                    <a href="https://eric-heiden.com">Eric Heiden</a><sup>1</sup>
+                </p>
+            </div>
+            <div class="col">
+                <p>
+                    <a href="https://www.ziangliu.com">Ziang Liu</a><sup>2</sup>
+                </p>
+            </div>
+            <div class="col">
+                <p>
+                    <a href="http://vibhavvineet.info">Vibhav Vineet</a><sup>3</sup>
+                </p>
+            </div>
+            <div class="col">
+                <p>
+                    <a href="https://scholar.google.de/citations?user=E_82W3EAAAAJ">Erwin Coumans</a><sup>4</sup>
+                </p>
+            </div>
+            <div class="col">
+                <p>
+                    <a href="https://robotics.usc.edu//~gaurav/">Gaurav S. Sukhatme</a><sup>1</sup>
+                </p>
+            </div>
+        </div>
+        <div class="row affiliations">
+            <div class="col">
+                <p><sup>1</sup>University of Southern California</p>
+            </div>
+            <div class="col">
+                <p><sup>2</sup>Stanford University</p>
+            </div>
+            <div class="col">
+                <p><sup>3</sup>Microsoft Research</p>
+            </div>
+            <div class="col">
+                <p><sup>4</sup>Google Research</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="abstract">
+        <div class="row">
+            <h2>Abstract</h2>
+            <p class="col-sm-10 fs-5">
+                Being able to reproduce physical phenomena ranging from light interaction to contact mechanics, simulators are
+                becoming increasingly useful in more and more application
+                domains where real-world interaction or labeled data are
+                difficult to obtain. Despite recent progress, significant human
+                effort is needed to configure simulators to accurately reproduce
+                real-world behavior. We introduce a pipeline that combines
+                inverse rendering with differentiable simulation to create digital
+                twins of real-world articulated mechanisms from depth or RGB
+                videos. Our approach automatically discovers joint types and
+                estimates their kinematic parameters, while the dynamic properties of the overall mechanism are tuned to attain physically
+                accurate simulations. Control policies optimized in our derived
+                simulation transfer successfully back to the original system, as
+                we demonstrate on a simulated system. Further, our approach
+                accurately reconstructs the kinematic tree of an articulated
+                mechanism being manipulated by a robot, and highly nonlinear
+                dynamics of a real-world coupled pendulum mechanism.
+            </p>
+            <div class="card col align-self-center border-0">
+                <a href="#">
+                    <img src="paper.png" class="card-img-top" alt="Video2sim paper" />
+                    <div class="card-body" align="center">
+                        <h5 class="card-title">Paper on ArXiv</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="summary">
+        <div class="row">
+            <object data="pipeline.svg" alt="Video2sim pipeline" style="height: 100%; width: 100%; object-fit: contain" type="image/svg+xml">
+                <img src="pipeline.svg">
+            </object>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col">
+                <p style="text-align:justify">
+                    Pipeline of our <em>video2sim</em> approach which creates a simulation from a video of an articulated mechanism.
+                    In this example, a cartpole is identified by first finding the objects in the video and extracting their segmentation maps using a segmentation network.
+                    Then, the poses of the rigid objects are tracked given the image sequence by leveraging an inverse renderer that allows us to optimize the SE(3) poses given a loss function defined on the pixel values.
+                    The poses are then used to identify the articulations in the scene, i.e. the types of joints, and their kinematic parameters, that connect the rigid bodies.
+                    Finally, we leverage gradient-based Bayesian inference algorithms to approximate posterior distributions over simulation parameters that allow us to reconstruct a full simulation of the observed mechanism with its accurate dynamical properties.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="container" id="video">
+        <h2>Video</h2>
+        <div class="row justify-content-md-center">
+            <div class="ratio ratio-16x9 w-75">
+                <iframe src="" title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="container" id="results">
+        <h2>Results</h2>
+
+        <div class="row">
+            <div class="col">
+                <h3>Articulated Tree</h3>        
+                <p class="lead">We infer the articulation of a simulated tree structure that has five rigid bodies connected via two revolute joints and two fixed joints.</p>
+                <video autoplay muted loop class="img-fluid">
+                    <source src="clips/articulated_tree.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="col">
+                <h3>Cartpole</h3>        
+                <p class="lead">Given a sequence of depth images of a simulated cartpole, we find the articulations and dynamical properties to accurately reproduce the dynamics of the cartpole.</p>
+                <video autoplay muted loop class="img-fluid">
+                    <source src="clips/cartpole.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h3>Rott's Pendulum</h3>        
+                <p class="lead">Our approach finds a realistic digital twin of Rott's coupled pendulum system given an RGB video of such mechanism.</p>
+                <video autoplay muted loop class="img-fluid">
+                    <source src="clips/rott_pendulum.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="col">
+                <h3>Craftsman System</h3>        
+                <p class="lead">By recording a depth video of a robot manipulating a system made of wood parts from a Craftsman toy construction set, we are able to recover the kinematic structure.</p>
+                <video autoplay muted loop class="img-fluid">
+                    <source src="clips/craftsman.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container" id="acknowledgements">
+        <h2>Acknowledgements</h2>
+
+        <p class="lead">We thank Chris Denniston and David Millard for their
+            feedback and discussion around this work, as well as Vedant
+            Mistry for his contributions to an earlier prototype of our
+            implementation.</p>
+        <p class="lead">We are grateful to Maria Hakuba, Hansjörg 
+            Frei and Christoph Schar for kindly permitting us to use their
+            <a href="https://youtu.be/dhZxdV2naw8" target="_blank">video of Rott's mechanism</a>
+            in this work.</p>
+        <p class="lead">This research was supported by a Google Ph.D. Fellowship.</p>
+    </div>
+
+    <div class="bg-light">
+        <div class="container" align="right" style="padding:40px 0">
+            Last updated on March 20, 2022
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
